@@ -259,8 +259,13 @@ chatRouter.post('/', requireAuth, async (req: Request, res: Response) => {
       onChunk: ({ chunk }) => {
         if (chunk.type === 'raw') {
           const raw = chunk.rawValue as any;
-          // Extract trace in Databricks serving endpoint output format, if present
-          if (raw?.type === 'response.output_item.done') {
+          // Extract trace in Databricks serving endpoint output format, if present.
+          // Some endpoints (e.g. single-agent) emit it on response.output_item.done;
+          // others (e.g. Multi-Agent Supervisor) emit it on response.completed.
+          if (
+            raw?.type === 'response.output_item.done' ||
+            raw?.type === 'response.completed'
+          ) {
             const traceIdFromChunk =
               raw?.databricks_output?.trace?.info?.trace_id;
             if (typeof traceIdFromChunk === 'string') {
