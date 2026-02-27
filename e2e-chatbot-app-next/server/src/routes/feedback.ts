@@ -170,6 +170,7 @@ feedbackRouter.post('/', requireAuth, async (req: Request, res: Response) => {
         if (!mlflowResponse.ok) {
           const errorText = await mlflowResponse.text();
           console.error('Failed to submit feedback to MLflow:', errorText);
+          return res.status(200).json({ success: false, error: 'mlflow_submission_failed' });
         } else {
           const mlflowResult = await mlflowResponse.json();
           mlflowAssessmentId = mlflowResult.assessment?.assessment_id;

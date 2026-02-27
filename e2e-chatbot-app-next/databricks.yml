@@ -6,6 +6,9 @@ variables:
     description: "Name of the model serving endpoint to be used by the app"
     # TODO: uncomment the line below and specify a default value to avoid needing to specify it on each deployment
     # default: "your-serving-endpoint-name-goes-here"
+  mlflow_experiment_name:
+    description: "Path of the MLflow experiment associated with the serving endpoint (e.g. /Users/you@example.com/my-experiment). Granting access allows the app to write user feedback assessments to MLflow traces."
+    default: ""
   database_instance_name:
     description: "Base name of the Lakebase database instance"
     default: "chatbot-lakebase"
@@ -44,6 +47,14 @@ resources:
         #     database_name: databricks_postgres
         #     instance_name: ${resources.database_instances.chatbot_lakebase.name}
         #     permission: CAN_CONNECT_AND_CREATE
+        # TODO (optional): Uncomment the mlflow_experiment resource below to allow the app to write user
+        # feedback assessments to MLflow traces. Set the mlflow_experiment_name variable to the path of
+        # the MLflow experiment associated with your serving endpoint (visible in the Experiments UI).
+        # - name: mlflow-experiment
+        #   description: "MLflow experiment for writing user feedback assessments"
+        #   mlflow_experiment:
+        #     name: ${var.mlflow_experiment_name}
+        #     permission: CAN_EDIT
 
 targets:
   dev:

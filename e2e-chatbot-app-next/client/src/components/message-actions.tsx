@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { memo, useState, useCallback, useRef } from 'react';
-import { toast } from 'sonner';
+import { toast } from './toast';
 import type { ChatMessage, Feedback } from '@chat-template/core';
 import {
   ChevronDown,
@@ -78,10 +78,16 @@ function PureMessageActions({
           throw new Error('Failed to submit feedback');
         }
 
+        const data = await response.json();
+        if (!data.success) {
+          toast({ type: 'error', description: 'Failed to submit feedback. The app may not have permission to write to this experiment.' });
+          return;
+        }
+
         setFeedback(feedbackType);
       } catch (error) {
         console.error('Error submitting feedback:', error);
-        toast.error('Failed to submit feedback. Please try again.');
+        toast({ type: 'error', description: 'Failed to submit feedback. Please try again.' });
       } finally {
         isSubmittingRef.current = false;
       }
